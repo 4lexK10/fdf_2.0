@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   calibrate.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: akloster <akloster@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 13:22:31 by akloster          #+#    #+#             */
-/*   Updated: 2024/05/28 14:25:09 by marvin           ###   ########.fr       */
+/*   Updated: 2024/05/28 20:51:07 by akloster         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,13 +109,9 @@ static int	check_scale_up(int **map_3d, t_2d_point dimensions)
 	scale = 2;
 	max_point(map_3d, &max_x, &max_y, dimensions);
 	min_point(map_3d, &min_x, &min_y, dimensions);
-	printf("%d, %d\n", iso_proj(&map_3d[max_y.y][max_y.x], 0, 1), iso_proj(&map_3d[max_y.y][max_y.x], 1, 1));
-	printf("%d, %d\n", iso_proj(&map_3d[min_y.y][min_y.x], 0, 1), iso_proj(&map_3d[min_y.y][min_y.x], 1, 1));
 	while ((iso_proj(&map_3d[max_x.y][max_x.x], 0, scale) - iso_proj(&map_3d[min_x.y][min_x.x], 0, scale)) < WIDTH &&
 	(iso_proj(&map_3d[max_y.y][max_y.x], 1, scale) - iso_proj(&map_3d[min_y.y][min_y.x], 1, scale)) < HEIGHT)
 		++scale;
-	printf("%d, %d\n", iso_proj(&map_3d[max_y.y][max_y.x], 1, scale), iso_proj(&map_3d[max_x.y][max_x.x], 0, scale));
-	printf("%d, %d\n", iso_proj(&map_3d[max_y.y][max_y.x], 1, scale - 1), iso_proj(&map_3d[max_x.y][max_x.x], 0, scale - 1));
 	return (scale - 1);
 }
 
@@ -128,8 +124,10 @@ void	calibrate(int **map, int **map_3d, t_2d_point dimensions)
 
 	i = -1;
 /* 	print_map(map, dimensions, 0); */
-	set_1st_quad(map, dimensions);
+	/* set_1st_quad(map, dimensions); */
 	scale_up = check_scale_up(map_3d, dimensions);
+	if (scale_up == -1)
+		printf("okkkkk\n");
 	while (++i < dimensions.y)
 	{
 		j = 0;

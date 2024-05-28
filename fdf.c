@@ -31,7 +31,6 @@ static void	put_grid(int **map, t_data *img, t_2d_point dimensions)
 			i.y = map[y][x + 1];
 			f.x = map[y][x + 2];
 			f.y = map[y][x + 3];
-			/* printf("i(%d, %d), f(%d, %d)\n", i.x, i.y, f.x, f.y); */
 			draw_line(i, f, img);
 			x += 2;
 		}
@@ -60,8 +59,8 @@ static	int	create_load_map(t_data *img, char *path)
 	int			**map;
 
 	dimensions = get_array_dimensions(path);
-	if (dimensions.x == 0)
-		return (/* error(),  */0);  //need error function
+	if (dimensions.x == 0 || (dimensions.x == 1 && dimensions.y == 1))
+		return (1);
 	fd = open(path, O_RDONLY);
 	map_3d = create_3d(fd, dimensions);
 	close(fd);
@@ -75,12 +74,13 @@ static	int	create_load_map(t_data *img, char *path)
 	return (free_map(&map, dimensions), free_map(&map_3d, dimensions), 0);
 }
 
-static int	mlx_close(int keycode, t_vars *vars, t_data *img)
+static int	mlx_close(int keycode, t_vars *vars)
 {
 	if (keycode == 53)
 	{
-		mlx_destroy_image(vars->mlx, img);
-		mlx_destroy_window(vars->mlx, vars->win); // destroy img
+		mlx_destroy_image(vars->mlx, vars->img.img);
+		mlx_destroy_window(vars->mlx, vars->win);
+		exit(0);
 	}
 	return (0);
 }
@@ -88,7 +88,6 @@ static int	mlx_close(int keycode, t_vars *vars, t_data *img)
 int main(int ac, char **av)
 {
 	t_vars	vars;
-	t_data	img;
 
 	if (ac != 2)
 		return (0);
@@ -96,42 +95,13 @@ int main(int ac, char **av)
 	if (!vars.mlx)
 		return (0);
 	vars.win = mlx_new_window (vars.mlx , WIDTH, HEIGHT, "fdf");
-	img.img = mlx_new_image(vars.mlx, WIDTH, HEIGHT);
-	img.addr = mlx_get_data_addr(img.img, &img.bpp, &img.line_length, &img.endian);
-	mlx_hook(vars.win, 2, 1L<<0, mlx_close, &vars);
-	if (create_load_map(&img, av[1]))
+	vars.img.img = mlx_new_image(vars.mlx, WIDTH, HEIGHT);
+	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bpp, &vars.img.line_length, &vars.img.endian);
+	if (create_load_map(&vars.img, av[1]))
 		return (0);
-	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 0, 0);
+	mlx_put_image_to_window(vars.mlx, vars.win, vars.img.img, 0, 0);
+	mlx_hook(vars.win, 2, 1L<<0, mlx_close, &vars);
+	mlx_hook(vars.win, 4, 1L<<2, mlx_close, &vars);
 	mlx_loop(vars.mlx);
 	return (0);
 }
-
-/* 	for (t_2d_grid *tempi = head_2d; tempi->next->x > tempi->x; tempi = tempi->next)
-	{
-		for (t_2d_grid *temp = tempi; temp != NULL; temp = temp->under)
-			my_mlx_pixel_put(&img, temp->x, temp->y, 0xffffff);
-	} */
-/* 	for (t_2d_grid *temp = head_2d->next->next; temp != NULL; temp = temp->under)
-		my_mlx_pixel_put(&img, temp->x, temp->y, 0xffffff); */
-/* 	for (t_2d_grid *temp = head_2d; temp != NULL; temp = temp->next)
-	{	
-		printf("(%d, %d) ", temp->point->x, temp->point->y);
-		if (temp->next != NULL && temp->next->point->x < temp->point->x)
-			printf("\n");
-	} */
-/* 	for (t_2d_grid *tempi = head_2d; tempi->next->point.x > tempi->point.x; tempi = tempi->next)
-	{
-		for (t_2d_grid *temp = tempi; temp != NULL; temp = temp->under)
-			my_mlx_pixel_put(&img, temp->point.x, temp->point.y, 0xffffff);
-	} */
-/* 	for (t_2d_grid *temp = head_2d; temp != NULL; temp = temp->next)
-	{	
-		printf("(%d, %d) ", temp->point.x, temp->point.y);
-		if (temp->next != NULL && temp->next->point.x < temp->point.x)
-			printf("\n");
-	} */
-/* 	for (t_2d_grid *tempi = head_2d; (nbr--) >= 0; tempi = tempi->next)
-	{
-		for (t_2d_grid *temp = tempi; temp != NULL; temp = temp->under)
-			my_mlx_pixel_put(&img, temp->point.x, temp->point.y, 0xffffff);
-	} */

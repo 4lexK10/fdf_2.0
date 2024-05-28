@@ -22,8 +22,8 @@
 # include <math.h>
 # define HEIGHT 1300
 # define WIDTH	2000
-# define SUCCESS 1
-# define FAIL    0
+# define SUCCESS 1 //<<----- is this used??
+# define FAIL    0 
 
 # include <stdio.h>//<<------ DELETE!!
 
@@ -40,6 +40,7 @@ typedef struct	s_vars
 {
 	void	*mlx;
 	void	*win;
+	t_data	img;
 }				t_vars;
 
 typedef struct			s_2d_point
