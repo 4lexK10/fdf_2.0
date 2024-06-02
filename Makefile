@@ -19,7 +19,7 @@ CFLAGS			=	-Wall -Wextra -Werror
 INCLUDES		=	-I /usr/local/include
 
 SRC				=	fdf.c free_functions.c create_3d.c utils.c create_2d.c \
-					draw_line.c calibrate.c testing.c
+					draw_line.c calibrate.c utils_2.c
 
 LIB				=	-L /usr/local/lib/ -lmlx -framework OpenGL -framework AppKit
 
@@ -32,10 +32,10 @@ OBJ_DIR			=	objs/
 OBJ				=	$(addprefix $(OBJ_DIR), $(SRC:.c=.o))
 
 RM				=	rm -rf
-#DELETE THE -fsanitize=adress -g
+
 $(NAME):		$(OBJ_DIR) $(OBJ)
 				make -C./libft
-				$(CC) $(CFLAGS) $(INCLUDES) $(SRC_GNL) $(OBJ) $(LIB) $(LIBFT) -fsanitize=undefined -g -o $@
+				$(CC) $(CFLAGS) $(INCLUDES) $(SRC_GNL) $(OBJ) $(LIB) $(LIBFT) -o $@
 
 all:			$(NAME)
 

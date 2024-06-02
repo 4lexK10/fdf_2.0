@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   img_build.c                                        :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: akloster <akloster@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/25 10:32:51 by akloster          #+#    #+#             */
-/*   Updated: 2024/05/28 19:44:01 by akloster         ###   ########.fr       */
+/*   Created: 2024/06/02 13:09:42 by akloster          #+#    #+#             */
+/*   Updated: 2024/06/02 16:57:22 by akloster         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,34 +17,35 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 	char	*dst;
 
 	dst = data->addr + (y * data->line_length + x * (data->bpp / 8));
-	*(unsigned int*)dst = color;
+	*(unsigned int *)dst = color;
 }
 
-float	iso_projf(int *point, int want_y)
+float	iso_prof(int *point, int want_y)
 {
 	if (want_y)
-		return (sqrt(6) / 6 * ((point[0]) + (point[1])) - sqrt(4) / 3 * (point[2]));
+		return (sqrt(6) / 6 * ((point[0]) + (point[1]))
+			- sqrt(4) / 3 * (point[2]));
 	return (sqrt(2) / 2 * ((point[0]) - (point[1])));
 }
 
-void	min_point(int **map, t_2d_point *min_x, t_2d_point *min_y, t_2d_point dimensions)
+void	min_point(int **map, t_2d_point *min_x, t_2d_point *min_y, t_2d_point d)
 {
 	int	i;
 	int	j;
 
 	i = -1;
-	while (++i < dimensions.y)
+	while (++i < d.y)
 	{
 		j = 0;
-		while (j / 3 < dimensions.x)
+		while (j / 3 < d.x)
 		{
-			if (iso_projf(&map[i][j], 0) < iso_projf(&map[min_x->y][min_x->x], 0))
-			{	
+			if (iso_prof(&map[i][j], 0) < iso_prof(&map[min_x->y][min_x->x], 0))
+			{
 				min_x->x = j;
 				min_x->y = i;
 			}
-			if (iso_projf(&map[i][j], 1) < iso_projf(&map[min_y->y][min_y->x], 1))
-			{	
+			if (iso_prof(&map[i][j], 1) < iso_prof(&map[min_y->y][min_y->x], 1))
+			{
 				min_y->x = j;
 				min_y->y = i;
 			}
@@ -53,9 +54,9 @@ void	min_point(int **map, t_2d_point *min_x, t_2d_point *min_y, t_2d_point dimen
 	}
 }
 
-t_2d_point	bresenham_algo(t_2d_point i, t_2d_point f, int *param, t_2d_grid *head)
+t_2d_point	bresenham(t_2d_point i, t_2d_point f, int *param, t_2d_grid *head)
 {
-	t_2d_point pixel;
+	t_2d_point	pixel;
 
 	pixel = i;
 	if (!head)
@@ -87,14 +88,15 @@ t_2d_point	get_array_dimensions(char *path)
 	dimensions.x = 0;
 	dimensions.y = 1;
 	fd = open(path, O_RDONLY);
-	output = get_next_line(fd); 
+	output = get_next_line(fd);
 	clean_line(&output);
-	line = ft_split(output, ' '); // check if split protection works
+	line = ft_split(output, ' ');
 	my_free(&output);
 	if (!line)
 		return (dimensions);
-	while (*line++ != NULL)
-		++dimensions.x;
+	while (line[++dimensions.x] != NULL)
+		;
+	free_ptr_array(&line);
 	output = get_next_line(fd);
 	while (output != NULL)
 	{

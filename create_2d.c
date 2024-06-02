@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   create_2d.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: akloster <akloster@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/02 13:28:52 by akloster          #+#    #+#             */
+/*   Updated: 2024/06/02 13:32:31 by akloster         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fdf.h"
 
 static void	fill_line(int *line, int y, int max_x, int **map)
@@ -25,21 +37,21 @@ int	**create_2d(int **map_3d, t_2d_point dimensions)
 	y = -1;
 	map = (int **)malloc(sizeof(int *) * dimensions.y);
 	if (!map)
-		return (free_map(&map_3d, dimensions), NULL);
+	{
+		free_map(&map_3d, dimensions);
+		return (NULL);
+	}
 	while (++i < dimensions.y)
 	{
 		map[i] = (int *)malloc(sizeof(int) * (dimensions.x * 3));
 		if (!map[i])
-			return (free_map(&map, dimensions), free_map(&map_3d, dimensions), NULL);
+		{
+			free_map(&map, dimensions);
+			free_map(&map_3d, dimensions);
+			return (NULL);
+		}
 	}
 	while (++y < dimensions.y)
 		fill_line(map[y], y, dimensions.x * 3, map_3d);
 	return (map);
-}
-
-int	iso_proj(int *point, int want_y, int scale)
-{
-	if (want_y)
-		return ((int)(sqrt(6) / 6 * ((scale * point[0]) + (scale * point[1])) - sqrt(4) / 3 * (scale * point[2])));
-	return ((int)(sqrt(2) / 2 * ((scale * point[0]) - (scale * point[1]))));
 }
