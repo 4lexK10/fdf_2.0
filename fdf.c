@@ -50,12 +50,16 @@ static	int	create_load_map(t_data *img, char *path)
 		return (1);
 	fd = open(path, O_RDONLY);
 	map_3d = create_3d(fd, dimensions);
-	close(fd);
+	if (close(fd) == -1)
+		return (1);
 	if (!map_3d)
 		return (1);
 	map = create_2d(map_3d, dimensions);
 	if (!map)
+	{
+		free_map(&map_3d, dimensions);
 		return (1);
+	}
 	calibrate(map, map_3d, dimensions);
 	put_grid(map, img, dimensions);
 	free_map(&map, dimensions);

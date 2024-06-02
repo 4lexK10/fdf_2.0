@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   create_2d.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akloster <akloster@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/02 13:28:52 by akloster          #+#    #+#             */
-/*   Updated: 2024/06/02 13:32:31 by akloster         ###   ########.fr       */
+/*   Updated: 2024/06/03 00:24:53 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void	fill_line(int *line, int y, int max_x, int **map)
 	{
 		line[++i] = iso_proj(&map[y][x], 0, 1);
 		line[++i] = iso_proj(&map[y][x], 1, 1);
-		x += 3;
+		x += 2;
 	}
 }
 
@@ -43,7 +43,7 @@ int	**create_2d(int **map_3d, t_2d_point dimensions)
 	}
 	while (++i < dimensions.y)
 	{
-		map[i] = (int *)malloc(sizeof(int) * (dimensions.x * 3));
+		map[i] = (int *)malloc(sizeof(int) * (dimensions.x * 2));
 		if (!map[i])
 		{
 			free_map(&map, dimensions);
@@ -52,6 +52,6 @@ int	**create_2d(int **map_3d, t_2d_point dimensions)
 		}
 	}
 	while (++y < dimensions.y)
-		fill_line(map[y], y, dimensions.x * 3, map_3d);
+		fill_line(map[y], y, dimensions.x * 2, map_3d);
 	return (map);
 }

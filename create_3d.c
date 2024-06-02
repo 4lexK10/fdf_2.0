@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   create_3d.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akloster <akloster@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 19:03:22 by akloster          #+#    #+#             */
-/*   Updated: 2024/06/02 16:47:23 by akloster         ###   ########.fr       */
+/*   Updated: 2024/06/03 01:36:20 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,10 @@ static int	fill_line(int *line, int y, int max_x,	int fd)
 	clean_line(&raw_line);
 	raw_z = ft_split(raw_line, ' ');
 	if (!raw_z)
-		return (my_free(&raw_line), 1);
+	{
+		my_free(&raw_line);
+		return (1); //what hapens if raw_line = NULL (&NULL?)
+	}
 	while (x < max_x)
 	{
 		line[++i] = x;
@@ -68,6 +71,8 @@ int	**create_3d(int fd, t_2d_point dimensions)
 	int		i;
 	int		**map;
 
+	if (fd == -1)
+		return (NULL);
 	i = -1;
 	map = (int **)malloc(sizeof(int *) * dimensions.y);
 	if (!map)
